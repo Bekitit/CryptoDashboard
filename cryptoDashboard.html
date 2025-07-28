@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<style>
+  body {
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  }
+</style>
+<body>
+  <div class="container mt-5">
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">All Coins</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#favorites" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Favorite</button>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+    <div class="d-flex align-items-center justify-content-between mt-4">
+      <div><h1>Crypto Dashboard</h1></div>
+      <div>
+        <button class="btn btn-danger p-2">Restore</button>
+      </div>
+    </div>
+
+    <table id="table" class="display mt-4" style="width: 100%;">
+      <thead>
+        <tr>
+          <th>Coin</th>
+          <th>Price</th>
+          <th>24hr Change</th>
+          <th>Market Cap</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+     <div class="modal" tabindex="-1" id="modal">
+  <div class="modal-dialog bg-dark text-light">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header">
+        <h5 class="modal-title">Upate Coins</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="id">
+        <label for="update-price">Price</label>
+        <input type="number" class="form-control" id="update-price">
+        <label for="update-24hrchange">24hr Change</label>
+        <input type="number" class="form-control" id="update-24hrchange">
+        <label for="update-mcap">Market Cap</label>
+        <input type="number" class="form-control" id="update-mcap">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="saveChanges()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mt-5 d-flex flex-column flex-md-row gap-2">
+           <div class="col-md-6 p-3  border border-white">
+            <h4>Top 5 Coins by Market Cap</h4>
+            <canvas id="chart1"></canvas>
+           </div>
+           <div class="col-md-6 p-3 border border-white">
+            <h4>Price Chart (Top 5)</h4>
+            <canvas id="chart2"></canvas>
+           </div>
+        </div>
+        <div class="mt-5 d-flex flex-column flex-md-row gap-2 mb-5">
+            <div class="col-md-6 p-3 border border-white">
+            <h4>Price Change 24hr (Top 5)  </h4>
+            <canvas id="chart3"></canvas>
+           </div>
+           <div class="col-md-6 p-3  border border-white">
+            <h4>Market Cap Change 24hr (Top5)</h4>
+            <canvas id="chart4"></canvas>
+           </div>
+
+        </div>
+  </div>
+  <div class="tab-pane fade" id="favorites" role="tabpanel">
+    <table id="favTable" class="display mt-4" style="width: 100%;">
+      <thead>
+        <tr>
+          <th>Coin</th>
+          <th>Price</th>
+          <th>24hr Change</th>
+          <th>Market Cap</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="favBody"></tbody>
+    </table>
+      <div class="modal" tabindex="-1" id="modal2">
+  <div class="modal-dialog bg-dark text-light">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header">
+        <h5 class="modal-title">Upate Coins</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+       <input type="hidden" id="id2">
+      <label for="update-price2">Price</label>
+      <input type="number" class="form-control" id="update-price2">
+      <label for="update-24hrchange2">24hr Change</label>
+      <input type="number" class="form-control" id="update-24hrchange2">
+      <label for="update-mcap2">Market Cap</label>
+      <input type="number" class="form-control" id="update-mcap2">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="saveChanges2()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+
+</div>
+</ul>
+  </div>
+ <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+ let deletedCoins = JSON.parse(localStorage.getItem('deleted')) || [];
+let updatedCoins = JSON.parse(localStorage.getItem('updatedCoin')) || [];
+let favoriteCoins = JSON.parse(localStorage.getItem('favorites')) || [];
+
+
+async function loadcoins() {
+  try {
+    let coins = JSON.parse(localStorage.getItem('saved')) || [];
+
+    if (coins.length === 0) {
+      const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=50');
+      coins = await res.json();
+      localStorage.setItem('saved', JSON.stringify(coins));
+    }
+
+    renderCoins(coins);
+    renderFavorites(coins);
+  } catch (error) {
+    console.error("Error loading coins:", error);
+    alert("Failed to fetch coins.");
+  }
+}
+
+function saveDeletedCoins() {
+  localStorage.setItem('deleted', JSON.stringify(deletedCoins));
+}
+
+function renderCoins(coins) {
+  if ($.fn.DataTable.isDataTable('#table')) {
+    $('#table').DataTable().destroy();
+  }
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+
+  const filtered = coins
+    .filter(coin => !deletedCoins.includes(coin.id))
+    .map(coin => {
+      const updated = updatedCoins.find(u => u.id === coin.id);
+      return updated ? { ...coin, ...updated } : coin;
+    });
+
+  filtered.forEach(coin => {
+    const tr = document.createElement('tr');
+
+    const tdCoin = document.createElement('td');
+    const img = document.createElement('img');
+    img.src = coin.image;
+    img.width = 20;
+    img.style.marginRight = '6px';
+
+    const i = document.createElement('i');
+    i.className = favoriteCoins.includes(coin.id) ? 'bx bxs-star' : 'bx bx-star';
+    i.style.cursor = 'pointer';
+    i.style.marginRight = '6px';
+    i.addEventListener('click', () => {
+      const isFavorite = favoriteCoins.includes(coin.id);
+      if (isFavorite) {
+        favoriteCoins = favoriteCoins.filter(id => id !== coin.id);
+      } else {
+        favoriteCoins.push(coin.id);
+      }
+      localStorage.setItem('favorites', JSON.stringify(favoriteCoins));
+      loadcoins();
+    });
+
+    const name = document.createElement('span');
+    name.textContent = coin.name;
+    tdCoin.append(i, img, name);
+
+    const tdPrice = document.createElement('td');
+    tdPrice.textContent = `$${coin.current_price}`;
+
+    const tdChange = document.createElement('td');
+    const change = coin.price_change_percentage_24h;
+    tdChange.textContent = `${change.toFixed(2)}%`;
+    tdChange.style.color = change > 0 ? 'green' : 'red';
+
+    const tdCap = document.createElement('td');
+    tdCap.textContent = `$${coin.market_cap}`;
+
+    const tdBtn = document.createElement('td');
+    const updateBtn = document.createElement('button');
+    updateBtn.className = 'btn btn-success me-2';
+    updateBtn.textContent = 'Update';
+    updateBtn.onclick = () => {
+      document.getElementById('id').value = coin.id;
+      document.getElementById('update-price').value = coin.current_price;
+      document.getElementById('update-24hrchange').value = coin.price_change_percentage_24h;
+      document.getElementById('update-mcap').value = coin.market_cap;
+
+      const updateModal = new bootstrap.Modal(document.getElementById('modal'));
+      updateModal.show();
+    };
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-danger';
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.onclick = () => {
+      favoriteCoins = favoriteCoins.filter(id => id !== coin.id);
+      deletedCoins.push(coin.id);
+      saveDeletedCoins();
+      loadcoins();
+    };
+
+    tdBtn.append(updateBtn, deleteBtn);
+    tr.append(tdCoin, tdPrice, tdChange, tdCap, tdBtn);
+    tbody.appendChild(tr);
+  });
+
+  if (filtered.length > 0) {
+    $('#table').DataTable({ order: [[3, 'desc']] });
+  }
+   renderMarketCapChange(filtered);
+    renderMarketCapChart(filtered);
+    renderPriceChange(filtered);
+    renderPriceChart(filtered);
+}
+
+document.querySelector('.btn-danger').addEventListener('click', () => {
+  deletedCoins = [];
+  updatedCoins = [];
+  localStorage.removeItem('deleted');
+  localStorage.removeItem('updatedCoin');
+  loadcoins();
+});
+
+function saveChanges() {
+  const id = document.getElementById('id').value;
+  const price = document.getElementById('update-price').value;
+  const change = document.getElementById('update-24hrchange').value;
+  const mCap = document.getElementById('update-mcap').value;
+
+  const upcoin = {
+    id: id,
+    current_price: parseFloat(price),
+    price_change_percentage_24h: parseFloat(change),
+    market_cap: parseFloat(mCap)
+  };
+
+  updatedCoins = updatedCoins.filter(c => c.id !== id);
+  updatedCoins.push(upcoin);
+
+  localStorage.setItem('updatedCoin', JSON.stringify(updatedCoins));
+
+  loadcoins();
+  bootstrap.Modal.getInstance(document.getElementById('modal')).hide();
+}
+function saveChanges2() {
+  const id = document.getElementById('id2').value;
+  const price = document.getElementById('update-price2').value;
+  const change = document.getElementById('update-24hrchange2').value;
+  const mCap = document.getElementById('update-mcap2').value;
+
+  const upcoin = {
+    id: id,
+    current_price: parseFloat(price),
+    price_change_percentage_24h: parseFloat(change),
+    market_cap: parseFloat(mCap)
+  };
+
+  updatedCoins = updatedCoins.filter(c => c.id !== id);
+  updatedCoins.push(upcoin);
+
+  localStorage.setItem('updatedCoin', JSON.stringify(updatedCoins));
+
+  loadcoins();
+  bootstrap.Modal.getInstance(document.getElementById('modal2')).hide();
+}
+
+function renderFavorites(coins) {
+  if ($.fn.DataTable.isDataTable('#favTable')) {
+    $('#favTable').DataTable().destroy();
+  }
+
+  const favBody = document.getElementById('favBody');
+  favBody.innerHTML = '';
+
+  const filtered = coins
+    .filter(c => favoriteCoins.includes(c.id))
+    .map(c => {
+      const updated = updatedCoins.find(u => u.id === c.id);
+      return updated ? { ...c, ...updated } : c;
+    });
+
+  filtered.forEach(coin => {
+    const tr = document.createElement('tr');
+
+    const tdCoin = document.createElement('td');
+    const img = document.createElement('img');
+    img.src = coin.image;
+    img.width = 20;
+    img.style.marginRight = '6px';
+
+    const name = document.createElement('span');
+    name.textContent = coin.name;
+    tdCoin.append(img, name);
+
+    const tdPrice = document.createElement('td');
+    tdPrice.textContent = `$${coin.current_price}`;
+
+    const tdChange = document.createElement('td');
+    const change = coin.price_change_percentage_24h;
+    tdChange.textContent = `${change.toFixed(2)}%`;
+    tdChange.style.color = change > 0 ? 'green' : 'red';
+
+    const tdCap = document.createElement('td');
+    tdCap.textContent = `$${coin.market_cap}`;
+
+    const tdBtn = document.createElement('td');
+    const updateBtn = document.createElement('button');
+    updateBtn.className = 'btn btn-success me-2';
+    updateBtn.textContent = 'Update';
+  
+      updateBtn.onclick = () => {
+      document.getElementById('id2').value = coin.id;
+      document.getElementById('update-price2').value = coin.current_price;
+      document.getElementById('update-24hrchange2').value = coin.price_change_percentage_24h;
+      document.getElementById('update-mcap2').value = coin.market_cap;
+
+  const updateModal = new bootstrap.Modal(document.getElementById('modal2'));
+  updateModal.show();
+};
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-danger';
+    deleteBtn.textContent = 'Delete';
+   deleteBtn.onclick = () => {
+   deletedCoins.push(coin.id);
+  favoriteCoins = favoriteCoins.filter(id => id !== coin.id);
+  localStorage.setItem('favorites', JSON.stringify(favoriteCoins));
+  saveDeletedCoins();
+  loadcoins();
+};
+
+
+    tdBtn.append(updateBtn, deleteBtn);
+
+    tr.append(tdCoin, tdPrice, tdChange, tdCap,tdBtn);
+    favBody.appendChild(tr);
+  });
+
+  if (filtered.length > 0) {
+    $('#favTable').DataTable({ order: [[3, 'desc']] });
+  }
+}
+
+//charts
+let myChart1;
+let myChart2;
+let myChart3;
+let myChart4;
+function renderMarketCapChart(filtered) {
+            const sorted = filtered.sort((a,b) => b.market_cap - a.market_cap);
+            const top5 = sorted.slice(0,5);
+            const labels = top5.map(coin => coin.name);
+            const mdata = top5.map(coin => coin.market_cap)
+            const data = {
+               labels: labels,
+               datasets: [{
+                 label: 'Market Cap',
+                 data: mdata,
+               backgroundColor: [
+                 'rgba(255, 99, 132, 0.2)',
+                 'rgba(255, 159, 64, 0.2)',
+                 'rgba(255, 205, 86, 0.2)',
+                 'rgba(75, 192, 192, 0.2)',
+                 'rgba(54, 162, 235, 0.2)',
+                 'rgba(153, 102, 255, 0.2)',
+                 'rgba(201, 203, 207, 0.2)'
+                ],
+               borderColor: [
+                 'rgb(255, 99, 132)',
+                 'rgb(255, 159, 64)',
+                 'rgb(255, 205, 86)',
+                 'rgb(75, 192, 192)',
+                 'rgb(54, 162, 235)',
+                 'rgb(153, 102, 255)',
+                 'rgb(201, 203, 207)'
+                ],
+               borderWidth: 1
+            }]
+        };
+        const config1 = {
+        type: 'bar',
+        data: data,
+        options: {
+        scales: {
+        y: {
+        beginAtZero: true
+        }
+       }
+      },
+     };
+     if(myChart1){
+      myChart1.destroy();
+     }
+      myChart1 = new Chart(document.getElementById('chart1'),
+      config1)
+     }
+
+     function renderPriceChart(filtered){
+        const sorted = filtered.sort((a,b) => b.current_price - a.current_price);
+        const top5 = sorted.slice(0,5);
+        const labels = top5.map(coin => coin.name);
+        const data1 = top5.map(coin => coin.current_price);
+        const data = {
+        labels: labels,
+        datasets: [{
+        label: 'Price in USD',
+        data: data1,
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+                  }]
+        };
+        const config = {
+        type: 'line',
+        data: data,
+        };
+        if(myChart2){
+          myChart2.destroy();
+        }
+           myChart2 = new Chart(document.getElementById('chart2'),
+    config)
+     }
+     function renderPriceChange(filtered){
+        const sorted = filtered.sort((a,b) => b.price_change_24h - a.price_change_24h);
+        const top5 = sorted.slice(0,5);
+        const labels = top5.map(coin => coin.name);
+        const data1 = top5.map(coin => coin.price_change_24h);
+        const data = {
+        labels: labels,
+        datasets: [{
+        label: 'USD',
+        data: data1,
+        backgroundColor: [
+          'rgb(255, 99, 132)',
+          'rgb(54, 162, 235)',
+          'rgb(255, 205, 86)',
+          'rgb(153, 102, 255)',
+          'rgb(201, 203, 207)'
+         
+        ],
+         hoverOffset: 4
+         }]
+       };
+       const config = {
+       type: 'doughnut',
+       data: data,
+       };
+       if(myChart3){
+        myChart3.destroy();
+       }
+        myChart3 = new Chart(document.getElementById('chart3'),
+    config)
+     }
+
+     function renderMarketCapChange(filtered) {
+        const sorted = filtered.sort((a,b) => b.market_cap_change_24h - a.market_cap_change_24h);
+        const top5 = sorted.slice(0,5);
+        const labels = top5.map(coin => coin.name);
+        const data1 = top5.map(coin => coin.market_cap_change_24h);
+        const data = {
+        labels: labels,
+        datasets: [{
+        label: 'USD',
+        data:data1,
+        backgroundColor: [
+         'rgb(255, 99, 132)',
+         'rgb(54, 162, 235)',
+         'rgb(255, 205, 86)',
+         'rgb(153, 102, 255)',
+         'rgb(201, 203, 207)'
+        ],
+        hoverOffset: 4
+        }]
+      };
+      const config = {
+      type: 'pie',
+      data: data,
+      };
+      if(myChart4){
+        myChart4.destroy();
+      }
+       myChart4 = new Chart(document.getElementById('chart4'),
+    config)
+     }
+
+loadcoins();
+</script>
+</body>
+</html>
